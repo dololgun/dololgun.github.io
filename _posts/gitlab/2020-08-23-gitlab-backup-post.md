@@ -1,4 +1,10 @@
-# gitlab backup
+---
+title: "gitlab 삭제하기"
+date: 2020-08-23 16:00:00 +0900
+categories: gitlab
+---
+
+## gitlab backup
 
 ```bash
 sudo gitlab-rake gitlab:backup:create
@@ -15,3 +21,4 @@ Please back them up manually.
 ```
 
 > 수동 백업해야 할 설정 파일은 `/etc/gitlab/`에 있다. 
+
