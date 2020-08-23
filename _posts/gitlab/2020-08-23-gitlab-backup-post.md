@@ -1,5 +1,5 @@
 ---
-title: "gitlab 삭제하기"
+title: "gitlab 백업하기"
 date: 2020-08-23 16:00:00 +0900
 categories: gitlab
 ---
