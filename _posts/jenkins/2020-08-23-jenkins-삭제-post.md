@@ -1,7 +1,7 @@
 ---
 title: "Jenkins 삭제하기"
 date: 2020-08-23 16:00:00 +0900
-categories: Jenkins
+categories: jenkins
 ---
 
 jenkins 서버를 중지한다. 

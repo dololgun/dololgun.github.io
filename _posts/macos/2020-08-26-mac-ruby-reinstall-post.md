@@ -1,3 +1,9 @@
+---
+title: [MacOS] rubty 버전 관리
+date: 2020-08-26 21:00:00 +0900
+categories : macos 
+---
+
 ## mac에서 ruby버전 관리하기
 
 mac에는 이미 ruby가 설치되어 있지만 예전 버전이 설치되어 있고 update도 되지 않는다. 그래서 최신버전의 ruby를 homebrew를 통해서 설치하도록 한다. 
