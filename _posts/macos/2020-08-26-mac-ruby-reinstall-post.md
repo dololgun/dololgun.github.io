@@ -1,7 +1,7 @@
 ---
-title: "[MacOS] rubty 버전 관리"
+title: "[MacOS] ruby 버전 관리"
 date: 2020-08-26 21:00:00 +0900
-categories : macos
+categories: macos
 ---
 
 ## mac에서 ruby버전 관리하기
