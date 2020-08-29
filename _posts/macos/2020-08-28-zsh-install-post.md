@@ -61,6 +61,8 @@ ZSH_THEME="agnoster"
 
 이름이 너무 길경우 아래와 같은 로직을 .zshrc파일에 추가하면 사용자 이름만 나오도록 할 수 있다.
 
+{% raw %}
+
 ```shell
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
@@ -68,6 +70,8 @@ prompt_context() {
   fi
 }
 ```
+
+{% endraw %}
 
 ### newline 적용하기
 
