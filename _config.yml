@@ -15,7 +15,7 @@ remote_theme             : "mmistakes/minimal-mistakes"
 minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
-locale                   : "ko-KR"
+locale                   : "ko"
 title                    : "돌로구니의 기술 블로그"
 title_separator          : "-"
 subtitle                 : "무작정 따라하기" # site tagline that appears below site title in masthead
@@ -93,11 +93,11 @@ analytics:
 
 # Site Author
 author:
-  name             : "돌로구니"
+  name             : "이건호"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "그냥 개발 잘 하고 싶은 개발자입니다."
-  location         : "Seoul, Republic Of Korea "
-  email            :
+  location         : "서울, 대한민국"
+  email            : dololgun@gmail.com
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
