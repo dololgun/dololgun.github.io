@@ -20,16 +20,16 @@ foo:
 
 # main links
 main:
-  - title: "Quick-Start Guide"
-    url: /docs/quick-start-guide/
-  - title: "About"
+  # - title: "Quick-Start Guide"
+  #   url: /docs/quick-start-guide/
+  - title: "나와 이 블로그에 대해서"
     url: /about/
-  - title: "Sample Posts"
+  - title: "포스트"
     url: /year-archive/
-  - title: "Sample Collections"
+  - title: "컬렉션"
     url: /collection-archive/
-  - title: "Terms &amp; Privacy Policy"
-    url: /terms/
+  # - title: "Terms &amp; Privacy Policy"
+  #   url: /terms/
 
 
 # documentation links
