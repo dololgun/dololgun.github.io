@@ -1,6 +1,6 @@
 ---
 permalink: /about/
-title: "About"
+title: "나와 이 블로그에 대해서"
 last_modified_at: 2020-10-01T10:15:22-04:00
 toc: true
 ---
