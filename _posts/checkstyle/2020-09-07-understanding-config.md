@@ -1,5 +1,5 @@
 ---
-title: "체크스타일(checkstyle) - 2"
+title: "2. 체크스타일[checkstyle] - 설정하기"
 date: 2020-09-06 09:00:00 +0900
 categories: checkstyle
 ---
