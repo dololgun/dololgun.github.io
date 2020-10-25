@@ -38,7 +38,7 @@ categories: checkstyle
 
 ```
 
-위의 예시에서 모듈(modul) 태그안에 있는 것을 체크(Check)라고 부른다. 커스텀 체크를 만든다는 것은 이 설정에 추가할 수 있는 모듈을 직접 만든다는 것이다.
+위의 예시에서 모듈(module) 태그안에 있는 것을 체크(Check)라고 부른다. 커스텀 체크를 만든다는 것은 이 설정에 추가할 수 있는 모듈을 직접 만든다는 것이다.
 
 ## 체크스타일 동작 원리 이해하기
 
@@ -57,13 +57,13 @@ categories: checkstyle
 ... 중략 ...
 ```
 
-트리워커안에 다수의 서브모듈이 들어있다. 다수의 서브모듈은 AbstractCheck를 상속한 클래스들이다. 이것으로 보아, AbstractCheck를 상속한 어떤 클래스를 만들고 이 클래스를 설정파일의 트리워커안에 모듈로 추가한다면 커스텀 체크를 적용할 수 있을 것으로 보인다. 
+트리워커안에 다수의 서브모듈이 들어있다. 다수의 서브모듈은 AbstractCheck를 상속한 클래스들이다. 이것으로 보아, AbstractCheck를 상속한 특정 클래스를 만들고 이 클래스를 설정파일의 트리워커(TreeWalker)안에 모듈태그를 사용하여 추가한다면 커스텀 체크를 적용할 수 있을 것으로 보인다. 
 
 ### 소스 파싱
 
-체크스타일의 핵심 기능중의 하나는 자바소스를 읽어 구조화하는 것이다. 소스 파싱은 체크스타일이 알아서 잘 할 것이니 우리가 신경쓰지 않아도 되지만 구조화된 내용은 잘 이해해야 한다. 왜냐하면 커스텀 체크를 작성할 때 이 구조화된 내용을 지도 삼아 소스의 여기저기를 살펴봐야하기 때문이다. 
+체크스타일의 핵심 기능중의 하나는 자바소스를 읽어 구조화하는 것이다. 소스 파싱은 체크스타일이 알아서 잘 할 것이니 우리가 신경쓰지 않아도 되지만 체크스타일이 파싱하여 구조화한 내용은 잘 이해해야 한다. 왜냐하면 커스텀 체크를 작성할 때 이 구조화된 내용을 알아야 내가 찾고자 하는 특정 내용을 찾을 수 있기 때문이다. 예를 들어, 클래스명이 My로 시작하는지 체크하고자 할 때 우리는 구조화 된 내용에서 클래스명에 대한 내용을 찾을 수 있어야 한다.
 
-> 궁극적인 목적은 소스를 보고 그 소스의 어떤 부분이 우리가 정한 규칙에 어긋나느냐를 판단하는 것이다. 이 과정에서 소스의 특정 부분을 찾는 것이 커스텀 체크모듈을 작성하는 부분에서 많은 부분을 차지한다.
+> 우리의 궁극적인 목적은 소스를 검색하며 소스의 특정 부분이 우리가 정한 규칙에 부합하는지를 판단하는 것이다. 이 과정에서 소스의 특정 부분을 찾는 것이 커스텀 체크모듈을 작성하는 부분에서 많은 부분을 차지한다.
 
 ### 자바트리구조체(Java Tree Structure)
 
@@ -176,25 +176,42 @@ pom파일은 다음과 같다.
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>app.my</groupId>
-	<artifactId>checkstyle-custom</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>나의커스텀체크</name>
-	<description>나의커스텀체크</description>
-	<dependencies>
-		<dependency>
-			<groupId>com.puppycrawl.tools</groupId>
-			<artifactId>checkstyle</artifactId>
-			<version>8.33</version>	
-		</dependency>
-	</dependencies>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>app.my</groupId>
+  <artifactId>checkstyle-custom</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>my custom check</name>
+  
+  <properties>
+    <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
+  </properties>  
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>US-ASCII</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.puppycrawl.tools</groupId>
+      <artifactId>checkstyle</artifactId>
+      <version>8.36.2</version>
+    </dependency>
+  </dependencies>
 </project>
 ```
 
-의존성에 체크스타일 모듈을 추가하였다. 이 모듈을 기본으로 커스텀 체크를 개발할 것이다. 
+별다른 것은 없고 의존성에 체크스타일 라이브러리가 추가되었다. 이렇게 해야 `AbstractCheck`를 상속할 수 있다.
 
 ### 체크 모듈 작성하기
 
@@ -247,7 +264,17 @@ public int[] getDefaultTokens() {
 
 이제 토큰을 방문하여 수행해야 할 로직을 작성해야 한다. 이 로직은 `visitToken` 매소드를 통하여 가능하다. visitToken 매소드를 오버라이드하여 다음과 같이 작성한다. 
 
-## 커스텀 체크 빌드하기
+```java
+@Override
+public void visitToken(DetailAST ast) {
+    DetailAST dotToken = ast.findFirstToken(TokenTypes.DOT);
+    System.out.println("you do not need your hands");
+}
+```
+
+일단, 여기까지만 하고 내가 작성한 커스텀 체크가 실제 동작하는지 확인하는 것이 우선이다. 
+
+### 체크 모듈 빌드하기
 
 메이븐을 사용하면 쉽게 빌드 할 수 있는것 뿐만 아니라 이것을 사용해야 하는 또 다른 이 유가 있다. 나의 체크스타일 3번째 포스트에서 메이븐 체크스타일 플러그인을 소개한적 있다. 메이븐 체크스타일 플러그인에서 제공하는 또 다른 기능이 바로 의존성으로 커스텀 체크를 설정할 수 있다는 것이다. 즉, 나의 체크스타일 설정파일은 설정에 집중하는 것이고 라이브러리 의존성은 메이븐 설정을 이용하여 서로의 역할에 충실하도록 하는 것이다. 
 
@@ -282,9 +309,22 @@ public int[] getDefaultTokens() {
 </checkstyle-packages>
 ```
 
+이렇게 설정하면 잘 동작할 것으로 예상했지만 실제 빌드를 돌려보면 제대로 동작하지 않는다. 메이븐 체크스타일 홈페이지에서 설명한 부분은 아래와 같다. 하지만 동작하지 않는다. 
+![image-20201025201340702](..\..\assets\images\post\2020-10-03-custom-check\image-20201025201340702.png)
+
+제대로 동작하도록 하려면 이 xml파일의 이름과 위치가 다음과 같아야 한다. 
+
+![image-20201025201828625](../../assets/images/post/2020-10-03-custom-check/image-20201025201828625.png)
+
+
+
 중요한부분은 내가 작성한 커스텀 체크 클래스가 있는 패키지가 app.my.check라는 것을 알려주는 부분이다. 이렇게 명시함으로써 메이븐 체크스타일 플러그인이 의존성을 찾을 수 있다.
 
 자, 이제 메이븐 빌드(install)를 하여 내가 만든 커스텀 체크 모듈(jar)이 메이븐 로컬리포에 저장되도록 하자.
+
+### 인코딩 문제
+
+체크스타일 홈페이지에서 커스텀 체크 스타일 라이브러리는 UTF-8을 지원하지 않는다고 한다. (이 시대에 아직도 ~~ ). 그렇기 때문에 이클립스 설정도 UTF-8로 되어 있다면 US-ASCII로 변경해야 한다. 그래서 maven pom 파일에도 encoding 설정이 US-ASCII들어 있다. 
 
 ## 메이븐 환경설정에 추가
 
@@ -339,9 +379,29 @@ public int[] getDefaultTokens() {
 </project>
 ```
 
-다음으로 해야 할일은 `sun_checks.xml` 에 내가 만든 체크 모듈을 추가하는 것이다. 
+다음으로 해야 할일은 `sun_checks.xml` 에 내가 만든 체크 모듈을 추가하는 것이다.  다음과 같이 추가하자. 
 
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+          "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+          "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="Checker">
+  <property name="severity" value="error"/>
+  <property name="fileExtensions" value="java, properties, xml"/>
+  <module name="BeforeExecutionExclusionFileFilter">
+    <property name="fileNamePattern" value="module\-info\.java$"/>
+  </module>
+  ... 생략 ...
+  <module name="TreeWalker">
+    ... 생략 ...
+    <module name="UpperEll"/>    
+    <module name="MyPackageName" />
+  </module>
+</module>
+```
 
+위의 파일과 같이 MyPackageName 모듈을 추가하였다. 내가 작성한 클래스명은 `MyPackageNameCheck`이지만 체크스타일이 알아서 모듈명에 Check를 접미사로 추가하여 클래스를 찾는다. 물론 Check를 붙이지 않은 클래스명도 찾을 수 있다.
 
 ## 메이븐 실행 및 확인
 
