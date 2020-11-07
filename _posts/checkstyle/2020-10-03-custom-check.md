@@ -94,7 +94,7 @@ CLASS_DEF -> CLASS_DEF [5:0]
 
 보면 알 수 있듯이 매우 단순한 자바소스도 복잡한 트리구조로 되어 있다. 또한, 이것을 좀 더 비주얼적으로 볼 수 있는 GUI 툴을 제공한다. 이 툴은 자바트리구조체를 아래와 같이 화면으로 표현하여 훨씬 편하게 내용을 확인할 수 있다. ▼
 
-![체크스타일 GUI 툴](2020-10-03-custom-check.assets/image-20201003155213022.png)
+![체크스타일 GUI 툴](../../assets/images/post/2020-10-03-custom-check/image-20201003155213022.png)
 
 커스텀 체크를 작성한다면 이 툴은 꼭 사용해야 한다. 체크스타일이 생성하는 트리구조를 이해해야 커스텀 체크에 필요한 로직을 정확히 작성할 수 있기 때문이다. 트리 구조를 확인하면 대략적인 로직의 설계가 가능하다. 필자는 커스텀 체크를 작성하기 전에 대상이 되는 소스로 이 툴을 이용하여 트리구조를 확인하고 로직을 전개하였다.
 
@@ -168,9 +168,9 @@ public class MethodLimitCheck extends AbstractCheck
 
 ### 이클립스 프로젝트 생성
 
-본 포스팅에서는 이클립스를 이용하여 체크스타일을 개발하겠다. 그리고 빌드를 위해 메이븐을 활용하겠다. 메이븐을 이용하면 훨씬 편하게 커스텀 체크를 개발 할 수 있다. 다음과 같이 새로운 메이븐 프로젝트를 생성한다. 
+본 포스팅에서는 이클립스를 이용하여 체크스타일을 개발하겠다. 그리고 빌드를 위해 메이븐을 활용하겠다. 메이븐을 이용하면 편하게 커스텀 체크를 개발 할 수 있다. 다음과 같이 새로운 메이븐 프로젝트를 생성한다. 
 
-![image-20201004191244408](2020-10-03-custom-check.assets/image-20201004191244408.png) 
+![image-20201004191244408](../../assets/images/post/2020-10-03-custom-check/image-20201004191244408.png) 
 
 pom파일은 다음과 같다. 
 
@@ -211,127 +211,112 @@ pom파일은 다음과 같다.
 </project>
 ```
 
-별다른 것은 없고 의존성에 체크스타일 라이브러리가 추가되었다. 이렇게 해야 `AbstractCheck`를 상속할 수 있다.
+별다른 것은 없고 의존성에 체크스타일 라이브러리가 추가되었다. 이렇게 해야 `AbstractCheck`를 상속할 수 있다. 인코딩 설정을 US-ASCII로 하였는데 이것은 다음의 제약사항 부분에서 설명하도록 하겠다.
 
-### 체크 모듈 작성하기
+### 체크 모듈 작성하기 - 1
 
-패키지 명칭을 검사하는 체크 모듈을 생성해보자. `AbstractCheck` 를 상속하면 다음과 같이 최소한 3개의 매소드를 오버라이드 해야 한다. 
+모든 프로그램의 기본은 hollo world! 를 콘솔창에 출력하는 것이다. 우리도 애초의 목적 달성하기 전에 빠르게 hello world를 찍어보면서 커스텀 체크 모듈이 정말 동작하는지 확인하도록 하자.
+
+이를 위해 2개 파일을 생성한다.(pom 파일 제외)
+
+* app.my.checks.MyPackageNameCheck.java
+* checkstyle_packages.xml
+
+이클립스 프로젝트 익스플로러에서 보면 다음과 같다.
+
+![image-20201107220719671](../../assets/images/post/2020-10-03-custom-check/image-20201107220719671.png)
+
+#### MyPackageNameCheck.java
+
+MyPackageNameCheck.java 파일의 소스는 다음과 같다. 
 
 ```java
-package app.my.check;
-
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
-
 public class MyPackageNameCheck extends AbstractCheck {
 
-	@Override
-	public int[] getDefaultTokens() {
-		return null;
-	}
+    @Override
+    public int[] getDefaultTokens() {
+        System.out.println("Hello World! : getDefaultTokens");
+        return new int[] { TokenTypes.PACKAGE_DEF };  
+    }
 
-	@Override
-	public int[] getAcceptableTokens() {
-		return null;
-	}
+    @Override
+    public int[] getAcceptableTokens() {
+        System.out.println("Hello World! : getAcceptableTokens");
+        return null;
+    }
 
-	@Override
-	public int[] getRequiredTokens() {
-		return null;
-	}
-}
+    @Override
+    public int[] getRequiredTokens() {
+        System.out.println("Hello World! : getRequiredTokens");
+        return null;  
+    }
 
-```
-
-먼저 어떤 토큰에서 이 모듈이 실행되어야 하는지 결정해야한다. 패키지의 명칭을 검사하는 것이니 패키지와 관련된 토큰이 필요할 것 같아 보인다. 그럼 체크스타일은 패키지 명칭을 트리구조에서 어떻게 표현하는지 GUI툴을 이용하여 확인해야 한다. 이 전 포스팅에서 사용했던 FileUtil.java를 GUI툴로 실행해보자. 이클립스 플러그인을 설치했다면 아래와 같이 실행 가능할 것이다.
-
-![image-20201004193134183](2020-10-03-custom-check.assets/image-20201004193134183.png)
-
-실행하면 아래와 같이 소스의 정보를 표현하는 창이 나타난다. 자세히 살펴보니 패키지를 표현하는 토큰은 PACKAGE_DEF라는 타입의 토큰임을 알 수 있다. 그런데 PACKAGE_DEF 토큰안에는 DOT 이라는 토큰이 있고 그 토큰안에 패키지명이 IDENT라는 토큰으로 표현되어 있다는 것을 알 수 있다. 단순히 패키지명을 표현하는 것인데 상세하게 트리구조로 표현되어 있다. 그리고 패키지명을 체크하기 위해서는 PACKAGE_DEF 토큰을 찾고 그 안에 DOT이라는 토큰 참조하여 패키지명을 찾을 수 있다는 것을 알 수 있다. 
-
-![image-20201004193339805](2020-10-03-custom-check.assets/image-20201004193339805.png)
-
-> 이미 언급하였지만, 이렇게 GUI툴을 이용하여 토큰을 찾아내고 토큰에 맞춰 로직을 전개하는 것이 커스텀 체크 개발의 핵심이다.
-
-다시 원래 계획으로 돌아와 지금 우리가 만들려고 하는 체크모듈은 PACKAGE_DEF 토큰에서만 동작하면 되기 때문에 getDefaultTokens 매소드를 아래와 같이 작성하자.
-
-```java
-@Override
-public int[] getDefaultTokens() {
-  System.out.println("정말되는건가");
-  return new int[] { TokenTypes.PACKAGE_DEF };
+    @Override
+    public void visitToken(DetailAST ast) {
+		log(ast, "hello world!");
+		System.out.println("hello world! : " + ast);
+    }
 }
 ```
 
-이제 토큰을 방문하여 수행해야 할 로직을 작성해야 한다. 이 로직은 `visitToken` 매소드를 통하여 가능하다. visitToken 매소드를 오버라이드하여 다음과 같이 작성한다. 
+가장 중요한 부분이 `AbstractCheck` 를 상속하였고 최소 4개의 매서드를 오버라이드 해야 한다는 것이다. 
 
-```java
-@Override
-public void visitToken(DetailAST ast) {
-    DetailAST dotToken = ast.findFirstToken(TokenTypes.DOT);
-    System.out.println("you do not need your hands");
-}
-```
+#### checkstyle_packages.xml
 
-일단, 여기까지만 하고 내가 작성한 커스텀 체크가 실제 동작하는지 확인하는 것이 우선이다. 
+이 파일은 메이븐 체크 스타일 플러그인을 사용할 때 필요한 파일이다. 이 파일은 내가 작성한 체크 스타일 모듈이 어디에 있는 메이븐 체크 스타일 플러그인에게 알려주는 역할을 한다. 즉, 나의 체크스타일 설정파일은 설정에 집중하는 것이고 라이브러리 의존성은 메이븐 설정을 이용하여 서로의 역할에 충실하도록 하는 것이다. 
 
-### 체크 모듈 빌드하기
+파일의 위치가 중요한데, 필자가 처음 커스터 체크를 작성할 때 메이븐 체크 스타일 플러그인 홈페이지의 가이드를 참조하였는데 그곳에서는 packagenames.xml을 작성하여 내가 작성한 MyPackageNameCheck.java 파일과 같은 폴더에 위치하도록 가이드하였다. ([링크](https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/custom-developed-checkstyle.html)를 확인해보자)
 
-메이븐을 사용하면 쉽게 빌드 할 수 있는것 뿐만 아니라 이것을 사용해야 하는 또 다른 이 유가 있다. 나의 체크스타일 3번째 포스트에서 메이븐 체크스타일 플러그인을 소개한적 있다. 메이븐 체크스타일 플러그인에서 제공하는 또 다른 기능이 바로 의존성으로 커스텀 체크를 설정할 수 있다는 것이다. 즉, 나의 체크스타일 설정파일은 설정에 집중하는 것이고 라이브러리 의존성은 메이븐 설정을 이용하여 서로의 역할에 충실하도록 하는 것이다. 
+아래 그림은 홈페이지의 가이드를 캡쳐한 것이다. 이와 같은 구조로 작성하면 안된다. 아무리 해도 안된다. 
 
-이를 위해, 다음 packagenames.xml을 작성하여 소스의 루트디렉토리에 위치시키도록 하자.  
+![image-20201025201340702](2020-10-03-custom-check.assets/image-20201025201340702-1604755426563.png)
+
+한참을 찾아보니 체크스타일 홈페이지에 다음과 같은 내용이 있었다. ([링크](https://checkstyle.sourceforge.io/config.html#Packages) 확인)
+
+> To specify other packages to apply, create a *package names XML document* in a file named `checkstyle_packages.xml`, and provide that file in the root of the .jar containing your custom checks.
+>
+> [해석] 또 다른 패키지를 적용하기 위해서는, 파일명 `checkstyle_packages.xml` 을 작성하여 너가 작성한 커스텀 체크 모듈을 가지고 있는 jar 파일의 root 패스에 위치하도록 해야 한다.
+
+필자와 같은 과오를 범하지 말고 `checkstyle_packages.xml`파일을 작성하여 src/main/resources 폴더에 두자. 이렇게 하면 메이븐 빌드시 알아서 jar파일의 root 패스에 위치하게 된다.
+
+이 파일에 작성해야 되는 내용은 다음과 같다. 
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE checkstyle-packages PUBLIC
   "-//Checkstyle//DTD Package Names Configuration 1.0//EN"
   "https://checkstyle.org/dtds/packages_1_0.dtd">
+  
 <checkstyle-packages>
-    <package name="app.my.check" />
-    <package name="com.puppycrawl.tools.checkstyle">
-        <package name="checks">
-            <package name="blocks" />
-            <package name="coding" />
-            <package name="design" />
-            <package name="duplicates" />
-            <package name="header" />
-            <package name="imports" />
-            <package name="indentation" />
-            <package name="j2ee" />
-            <package name="javadoc" />
-            <package name="metrics" />
-            <package name="modifier" />
-            <package name="naming" />
-            <package name="sizes" />
-            <package name="whitespace" />
-        </package>
-        <package name="filters" />
-    </package>
+  <package name="app.my.checks" />
 </checkstyle-packages>
 ```
 
-이렇게 설정하면 잘 동작할 것으로 예상했지만 실제 빌드를 돌려보면 제대로 동작하지 않는다. 메이븐 체크스타일 홈페이지에서 설명한 부분은 아래와 같다. 하지만 동작하지 않는다. 
-![image-20201025201340702](..\..\assets\images\post\2020-10-03-custom-check\image-20201025201340702.png)
+내가 작성한 커스텀 체크 모듈의 jar파일에 `app.my.checks` 패키지에 체크 모듈이 있다는 것을 체크 스타일에게 알려주는 것이다.
 
-제대로 동작하도록 하려면 이 xml파일의 이름과 위치가 다음과 같아야 한다. 
+### 체크 모듈 빌드 및 배포하기
 
-![image-20201025201828625](../../assets/images/post/2020-10-03-custom-check/image-20201025201828625.png)
+Hello world! 출력을 위한 체크 모듈은 작성되었다. 우리가 만들 모듈을 jar파일로 만들기 위해 메이븐을 이용할 것이다. 메이븐 명령어는 다음과 같다. 
 
+```
+mvn clean package install
+```
 
+메이븐 실행은 이클립스 또는 윈도우 커맨드 창에서 할 수 있다. install을 하는 이유는 나의 메이븐 로컬 리포지토리에 생성한 jar 파일을 등록하기 위해서다. 추가적인 사항은 메이븐과 관련된 지식이 필요하니 여기서는 다루지 않겠다. 
 
-중요한부분은 내가 작성한 커스텀 체크 클래스가 있는 패키지가 app.my.check라는 것을 알려주는 부분이다. 이렇게 명시함으로써 메이븐 체크스타일 플러그인이 의존성을 찾을 수 있다.
+### 인코딩 문제(제약사항)
 
-자, 이제 메이븐 빌드(install)를 하여 내가 만든 커스텀 체크 모듈(jar)이 메이븐 로컬리포에 저장되도록 하자.
+커스텀 체크 스타일 라이브러리는 UTF-8을 지원하지 않는다고 한다. (이 시대에 아직도 ~~ ) 이 외에도 몇 가지 제약 사항이 존재 하니 다음 [링크](https://checkstyle.sourceforge.io/writingchecks.html#Limitations)에서 확인하도록 하자. 만약 자신의 이클립스 프로젝트의 기본 인코딩이 UTF-8이라면 US-ASCII로 설정을 변경해야 한다. 위의 maven pom에서 encoding 설정이 US-ASCII들어 있는 이유도 이 때문이다. 다음 그림은 이클립스에서 인코딩 설정을 변경하는 화면이다.
 
-### 인코딩 문제
+## 커스텀 체크 실행
 
-체크스타일 홈페이지에서 커스텀 체크 스타일 라이브러리는 UTF-8을 지원하지 않는다고 한다. (이 시대에 아직도 ~~ ). 그렇기 때문에 이클립스 설정도 UTF-8로 되어 있다면 US-ASCII로 변경해야 한다. 그래서 maven pom 파일에도 encoding 설정이 US-ASCII들어 있다. 
+### 메이븐 설정
 
-## 메이븐 환경설정에 추가
+이제 체크 스타일의 검사 대상이 되는 프로젝트로 이동하자. 지난 포스트의 메이븐 플러그인을 이용한 체크스타일 실행에서 사용했던 그 프로젝트이다. 여기서 해야 할일은 다음 2가지다. 
 
-이제 체크스타일의 검사 대상이 되는 프로젝트로 이동하자. 지난 포스트의 메이븐 플러그인을 이용한 체크스타일 실행에서 사용했던 그 프로젝트이다. 여기서 해야 할일은 다음 2가지다. 
+* 메이븐 체크스타일 플러그인에 커스텀 체크 모듈 의존성 추가
 
-1.  메이븐 체크스타일 플러그인에 커스텀 체크 모듈 의존성 추가
-2. 체크스타일 설정파일에 내가 생성한 체크 추가
+* 체크스타일 설정파일에 내가 생성한 체크 추가
 
 이 프로젝트의 pom파일에 아래와 같이 디펜던시를 추가한다. 
 
@@ -379,6 +364,8 @@ public void visitToken(DetailAST ast) {
 </project>
 ```
 
+이전 단계에서 메이븐 install 명령어를 통하여 로컬 리포지토리에 커스텀 체크 jar를 등록했기 때문에 메이븐이 알아서 이 jar 파일을 불러온다. 다른 pc에서 install 없이 수행한다면 메이븐이 해당 jar를 찾지 못할 것이다.  
+
 다음으로 해야 할일은 `sun_checks.xml` 에 내가 만든 체크 모듈을 추가하는 것이다.  다음과 같이 추가하자. 
 
 ```xml
@@ -403,9 +390,55 @@ public void visitToken(DetailAST ast) {
 
 위의 파일과 같이 MyPackageName 모듈을 추가하였다. 내가 작성한 클래스명은 `MyPackageNameCheck`이지만 체크스타일이 알아서 모듈명에 Check를 접미사로 추가하여 클래스를 찾는다. 물론 Check를 붙이지 않은 클래스명도 찾을 수 있다.
 
-## 메이븐 실행 및 확인
+### 메이븐 실행 및 확인
 
+이제 체크스타일을 수행해보자. 이클립스에서 메이븐을 쉽게 수행할 수 있는데 다음과 같이 Run Configurations를 설정하여 메이븐을 실행하자.
 
+![image-20201107231117661](../../assets/images/post/2020-10-03-custom-check/image-20201107231117661.png)
+
+다음과 같이 이클립스 콘솔 창에서 hello world!가 보인다면 내가 작성한 커스텀 체크가 잘 적용된 것이다. 
+
+![image-20201107231234910](../../assets/images/post/2020-10-03-custom-check/image-20201107231234910.png)
+
+> [고민] 필자는 이클립스에서 수행하는 메이븐과 윈도우 콘솔에서 수행하는 메이븐이 동일한 결과를 출력할 것으로 예상하였다. 하지만 윈도우 콘솔창에서 수행하는 메이븐은 필자가 작성한 커스텀 체크의 hello world!를 출력하지 않았다.
+
+## 체크 모듈 작성하기 - 2
+
+우리가 작성한 커스텀 체크가 잘 동작하는 것을 확인했으니 애초의 목적한대로 패키지 명칭과 클래스 명칭을 체크하는 모듈을 작성해보자.
+
+### 패키지 명칭 체크 하기
+
+먼저 어떤 토큰에서 이 모듈이 실행되어야 하는지 결정해야한다. 패키지의 명칭을 검사하는 것이니 패키지와 관련된 토큰이 필요할 것 같아 보인다. 그럼 체크스타일은 패키지 명칭을 트리구조에서 어떻게 표현하는지 GUI툴을 이용하여 확인해야 한다. 이 전 포스팅에서 사용했던 FileUtil.java를 GUI툴로 실행해보자. 이클립스 플러그인을 설치했다면 아래와 같이 실행 가능할 것이다.
+
+![image-20201004193134183](../../assets/images/post/2020-10-03-custom-check/image-20201004193134183.png)
+
+실행하면 아래와 같이 소스의 정보를 표현하는 창이 나타난다. 자세히 살펴보니 패키지를 표현하는 토큰은 PACKAGE_DEF라는 타입의 토큰임을 알 수 있다. 그런데 PACKAGE_DEF 토큰안에는 DOT 이라는 토큰이 있고 그 토큰안에 패키지명이 IDENT라는 토큰으로 표현되어 있다는 것을 알 수 있다. 단순히 패키지명을 표현하는 것인데 상세하게 트리구조로 표현되어 있다. 그리고 패키지명을 체크하기 위해서는 PACKAGE_DEF 토큰을 찾고 그 안에 DOT이라는 토큰 참조하여 패키지명을 찾을 수 있다는 것을 알 수 있다. 
+
+![image-20201004193339805](2020-10-03-custom-check.assets/image-20201004193339805.png)
+
+> 이미 언급하였지만, 이렇게 GUI툴을 이용하여 토큰을 찾아내고 토큰에 맞춰 로직을 전개하는 것이 커스텀 체크 개발의 핵심이다.
+
+다시 원래 계획으로 돌아와 지금 우리가 만들려고 하는 체크모듈은 PACKAGE_DEF 토큰에서만 동작하면 되기 때문에 getDefaultTokens 매소드를 아래와 같이 작성하자.
+
+```java
+@Override
+public int[] getDefaultTokens() {
+  System.out.println("정말되는건가");
+  return new int[] { TokenTypes.PACKAGE_DEF };
+}
+```
+
+이제 토큰을 방문하여 수행해야 할 로직을 작성해야 한다. 이 로직은 `visitToken` 매소드를 통하여 가능하다. visitToken 매소드를 오버라이드하여 다음과 같이 작성한다. 
+
+```java
+@Override
+public void visitToken(DetailAST ast) {
+    DetailAST dotToken = ast.findFirstToken(TokenTypes.DOT);
+    System.out.println("you do not need your hands");
+}
+```
+
+일단, 여기까지만 하고 내가 작성한 커스텀 체크가 실제 동작하는지 확인하는 것이 우선이다. 
 
 ## [목표] 체크스타일 이클립스 플러그인에 적용
 
