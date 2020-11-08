@@ -269,7 +269,7 @@ public class MyPackageNameCheck extends AbstractCheck {
 
 아래 그림은 홈페이지의 가이드를 캡쳐한 것이다. 이와 같은 구조로 작성하면 안된다. 아무리 해도 안된다. 
 
-![image-20201025201340702](2020-10-03-custom-check.assets/image-20201025201340702-1604755426563.png)
+![image-20201025201340702](../../assets/images/post/2020-10-03-custom-check/image-20201025201340702-1604755426563.png)
 
 한참을 찾아보니 체크스타일 홈페이지에 다음과 같은 내용이 있었다. ([링크](https://checkstyle.sourceforge.io/config.html#Packages) 확인)
 
@@ -400,7 +400,7 @@ mvn clean package install
 
 ![image-20201107231234910](../../assets/images/post/2020-10-03-custom-check/image-20201107231234910.png)
 
-> [고민] 필자는 이클립스에서 수행하는 메이븐과 윈도우 콘솔에서 수행하는 메이븐이 동일한 결과를 출력할 것으로 예상하였다. 하지만 윈도우 콘솔창에서 수행하는 메이븐은 필자가 작성한 커스텀 체크의 hello world!를 출력하지 않았다.
+> [고민] 필자는 이클립스에서 수행하는 메이븐과 윈도우 콘솔에서 수행하는 메이븐이 동일한 결과를 출력할 것으로 예상하였다. 하지만 윈도우 콘솔창에서 수행하는 메이븐은 필자가 작성한 커스텀 체크의 hello world!를 출력하지 않았다. 정확히 어떤 차이가 있는지 알 수는 없지만 이런 문제가 발생한다면 `mvn clean checkstyle:check` 와 같이 clean 명령어를 추가하면 정상적으로 동작한다.
 
 ## 체크 모듈 작성하기 - 2
 
@@ -412,13 +412,11 @@ mvn clean package install
 
 ![image-20201004193134183](../../assets/images/post/2020-10-03-custom-check/image-20201004193134183.png)
 
-실행하면 아래와 같이 소스의 정보를 표현하는 창이 나타난다. 자세히 살펴보니 패키지를 표현하는 토큰은 PACKAGE_DEF라는 타입의 토큰임을 알 수 있다. 그런데 PACKAGE_DEF 토큰안에는 DOT 이라는 토큰이 있고 그 토큰안에 패키지명이 IDENT라는 토큰으로 표현되어 있다는 것을 알 수 있다. 단순히 패키지명을 표현하는 것인데 상세하게 트리구조로 표현되어 있다. 그리고 패키지명을 체크하기 위해서는 PACKAGE_DEF 토큰을 찾고 그 안에 DOT이라는 토큰 참조하여 패키지명을 찾을 수 있다는 것을 알 수 있다. 
+실행하면 아래와 같이 소스의 정보를 표현하는 창이 나타난다. 자세히 살펴보니 패키지를 표현하는 토큰은 PACKAGE_DEF라는 타입의 토큰임을 알 수 있다. 
 
-![image-20201004193339805](2020-10-03-custom-check.assets/image-20201004193339805.png)
+![image-20201004193339805](../../assets/images/post/2020-10-03-custom-check/image-20201004193339805.png)
 
-> 이미 언급하였지만, 이렇게 GUI툴을 이용하여 토큰을 찾아내고 토큰에 맞춰 로직을 전개하는 것이 커스텀 체크 개발의 핵심이다.
-
-다시 원래 계획으로 돌아와 지금 우리가 만들려고 하는 체크모듈은 PACKAGE_DEF 토큰에서만 동작하면 되기 때문에 getDefaultTokens 매소드를 아래와 같이 작성하자.
+체크스타일은 모든 토큰에 대해서 우리의 모듈을 호출할 수 있다. 여기서 효율적인 동작을 위해 체크할 필요없는 토큰에서는 체크 모듈이 동작할 필요가 없다. 이런 설정을 가능하도록 하는 것이 `getDefaultTokens` 메소드이다. 우리가 만들려고 하는 체크 모듈은 `PACKAGE_DEF` 토큰에서만 동작하면 되기 때문에 getDefaultTokens 매소드를 아래와 같이 작성하자.
 
 ```java
 @Override
@@ -428,29 +426,78 @@ public int[] getDefaultTokens() {
 }
 ```
 
+> 이미 언급하였지만, 이렇게 GUI툴을 이용하여 토큰을 찾아내고 토큰에 맞춰 로직을 전개하는 것이 커스텀 체크 개발의 핵심이다.
+
+
+
+한편, PACKAGE_DEF 토큰 안에는 DOT이라는 토큰이 있고 그 토큰안에 패키지명이 IDENT라는 토큰으로 표현되어 있다는 것을 알 수 있다. 단순히 패키지명을 표현하는 것인데 상세하게 트리구조로 표현되어 있다. 그리고 패키지명을 체크하기 위해서는 PACKAGE_DEF 토큰을 찾고 그 안에 DOT이라는 토큰 참조하여 패키지명을 찾을 수 있다는 것을 알 수 있다. DOT 토큰의 구조를 좀 더 자세히 들여다보면 app.file패키지는 dot토큰을 표현하기 너무 단순하기 때문에 그 아래에 있는 import 토큰안에 있는 dot토큰을 살펴보자. 아래 그림과 같이 dot 토큰은 2개의 자식 토큰을 가질 수 있으며 첫번째 자식은 dot토큰이거나 IDENT토큰이다. 두번째 자식 토큰은 항상 IDENT 토큰이 된다.  
+
+![image-20201108162436339](../../assets/images/post/2020-10-03-custom-check/image-20201108162436339.png)
+
+위와 같은 규칙을 적용하여 dot을 기준으로 명칭을 가져오는 함수를 생성할 수 있다. 
+
+```java
+private String getNameFromDotToken(DetailAST dotToken) {
+
+  DetailAST first = dotToken.getFirstChild();
+  DetailAST second = first.getNextSibling();
+
+  String firstName = null;
+  String secondName = null;
+  if (first.getType() == TokenTypes.DOT) {
+    firstName = getNameFromDotToken(first);
+  } else {
+    firstName = first.getText();
+  }
+
+  if (second.getType() == TokenTypes.DOT) {
+    secondName = getNameFromDotToken(second);
+  } else {
+    secondName = second.getText();
+  }
+
+  return firstName + "." + secondName;
+}
+
+```
+
 이제 토큰을 방문하여 수행해야 할 로직을 작성해야 한다. 이 로직은 `visitToken` 매소드를 통하여 가능하다. visitToken 매소드를 오버라이드하여 다음과 같이 작성한다. 
 
 ```java
 @Override
 public void visitToken(DetailAST ast) {
-    DetailAST dotToken = ast.findFirstToken(TokenTypes.DOT);
-    System.out.println("you do not need your hands");
+
+  DetailAST dotToken = ast.findFirstToken(TokenTypes.DOT);
+  if (dotToken  != null) {
+
+    String packageName = getNameFromDotToken(dotToken);
+
+    if (packageName == null || !packageName.startsWith("app.my")) {
+      log(dotToken, "package name must be started app.my!! package name=" + packageName);
+    }
+  }
 }
 ```
 
-일단, 여기까지만 하고 내가 작성한 커스텀 체크가 실제 동작하는지 확인하는 것이 우선이다. 
+ dot토큰으로 이름을 가져오는 `getNameFromDotToken` 매소드를 활용하여 패키지 명칭을 가져왔다. 패키지 명칭이 우리가 정한 규칙에 부합하는지 확인하여 그렇지 않을 경우 `log` 매소드를 이용하여 규칙이 위반됨을 알린다. 
 
-## [목표] 체크스타일 이클립스 플러그인에 적용
+`log` 매소드는 체크 스타일 라이브러리에서 제공하는 매소드로 우리가 체크하는 규칙에 부합하지 않는 것을 발견하였을때 사용한다. 
 
-이클립스 플러그인에서는 내가 작성한 체크스타일을 적용할 수 없다. 
+체크 모듈이 완성되었으니 위에서 했던 과정(체크 모듈 빌드 및 install, 체크 대상 프로젝트로 이동, 메이븐으로 체크 스타일 실행)을 다시 진행해보자.
 
+우리가 테스트 하던 프로젝트는 app.file 이라는 패키지에 소스가 작성되어 있으니 다음과 같은 오류가 발생하면 정상 동작하는 것이다. 
 
+![image-20201108164733848](../../assets/images/post/2020-10-03-custom-check/image-20201108164733848.png)
 
-## 마무리
+## [해결과제] 커스텀 체크 이클립스 플러그인에 적용
 
-다음 포스팅 : 소나큐브에 적용하기
+지금까지 나만의 체크 스타일 모듈을 작성해보았다. 이 정도만 해도 내가 하고자 하는 왠만한 것들은 다 할 수 있을 것이다. 필자는 실무에서 데이터베이스와 연동하여 특정 클래스 명칭이 DB에 있는 데이터로만 이루어져 있는지 체크하는 모듈을 작성하기도 하였다. 
 
+하지만, 이것이 완벽한 환경은 아니다. 왜냐하면 이클립스 체크스타일 플러그인에는 우리가 작성한 커스텀 체크 모듈이 적용되어 있지 않기 때문이다. 이를 위해서는 이클립스 체크 스타일 플러그인 소스를 우리가 직접 수정하여 적용해야 한다. 이클립스 체크 스타일 플러그인은 오픈 소스이기 때문에 라이센스 규칙을 준수하는 상황에서 충분히 이용할 수 있다. 
 
+이를 위해, 체크 스타일 지식 뿐만 아니라 이클립스 플러그인을 작성하기 위한 지식이 수반되야 한다. 아무리 해도 끝이 없는 공부다. 필자도 아직 이 부분은 진행하지 않았다. 향후, 진행하게 된다면 그 결과를 공유하도록 한다.
+
+다음 포스팅에서는 체크 스타일을 소나 큐브에 적용해보도록 하겠다. 또한, 내가 작성한 커스텀 체크 모듈도 소나큐브에 적용하는 방법을 알아보도록 하겠다.
 
 ## 참고
 
