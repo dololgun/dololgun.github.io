@@ -1,5 +1,5 @@
 ---
-title: "5. 체크스타일[checkstyle] - 나만의 체크 만들기"
+title: "체크스타일[checkstyle] - 5 : 나만의 체크 만들기"
 date: 2020-10-03 09:00:00 +0900
 categories: checkstyle
 ---

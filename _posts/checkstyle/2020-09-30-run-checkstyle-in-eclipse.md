@@ -1,5 +1,5 @@
 ---
-title: "4. 체크스타일[checkstyle] - 이클립스 플러그인"
+title: "체크스타일[checkstyle] - 4 : 이클립스 플러그인"
 date: 2020-09-30 09:00:00 +0900
 categories: checkstyle
 ---
