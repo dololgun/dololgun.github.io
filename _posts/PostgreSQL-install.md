@@ -148,9 +148,17 @@ host    all             all             127.0.0.1/32            scram-sha-256
 host    all             all             192.168.1.0/24          trust
 ```
 
-
-
 다음 링크(https://www.postgresql.org/docs/13/user-manag.html) 참조
+
+### 접속하기
+
+JDBC드라이버로 DB작업을 진행할 수 있는 dbeaver를 설치하여 진행한다. [링크](https://dbeaver.com/download/)에서 다운받아 설치하자.
+
+> 참고 : jdbc 컨텍션 스트링은 다음과 같다.
+>
+> jdbc:postgresql://host:port/database
+
+
 
 # 참조
 

@@ -20,7 +20,7 @@
 
 ### 데이터 베이스 설치
 
-다음 3가지 데이터 베이스를 사용할 수 있다. 
+다음 3가지 데이터 베이스를 사용할 수 있다. 필자는 PostgreSQL을 설치하였다. sonar라는 이름의 database와 sonar라는 이름의 role을 생성해두자.
 
 * Microsoft SQL Server
 * Oracle
