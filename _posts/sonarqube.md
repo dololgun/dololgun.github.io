@@ -20,15 +20,19 @@
 
 ### 데이터 베이스 설치
 
-다음 3가지 데이터 베이스를 사용할 수 있다. 필자는 PostgreSQL을 설치하였다. sonar라는 이름의 database와 sonar라는 이름의 role을 생성해두자.
+다음 3가지 데이터 베이스를 사용할 수 있다. 필자는 PostgreSQL을 설치하였다. 
 
 * Microsoft SQL Server
 * Oracle
 * PostgreSQL
 
+PostgreSQL설치를 한 후 sonar라는 이름의 database와 sonar라는 이름의 role을 미리 생성한다. 소나큐브는 이 role과 database를 사용할 것이다.
+
 ### ZIP파일로 소나큐브 설치하기
 
-요구사항을 체크하자.
+이 방법은 소나큐브 홈페이지에서 zip파일을 받아 설치하는 방법으로 도커 이미지를 이용하여 설치하고자 한다면 생략하고 도커 설치 방법을 확인한다.
+
+설치하기 전에 다음 요구사항을 체크하자.
 
 * Oracle JRE 11 or OpenJDK 11
 
@@ -87,13 +91,15 @@ wrapper.java.command=/path/to/my/jdk/bin/java
 
 ### 도커 이미지로 설치하기
 
+#### 일반적인 방법
+
 1. 도커 이미지의 특성상 데이터를 유실하지 않기 위해 다음 설정을 한다. 
 
    * `sonarqube_data` – 엘라스틱 서치 인덱스, H2 데이터베이스를 위한 데이터 파일
    * `sonarqube_logs` – 소나큐브 로그(접속, 웹 프로세스, CE프로세스, 엘라스틱서치)
    * `sonarqube_extensions` – 설치한 플러그인과 오라클 JDBC
 
-   다음 명령어로 볼륨을 생성하자.
+   다음 명령어로 도커 볼륨을 생성하자.
 
    ```bash
    $> docker volume create --name sonarqube_data
@@ -105,7 +111,7 @@ wrapper.java.command=/path/to/my/jdk/bin/java
 
 2. 오라클을 제외하고 데이터베이스 드라이버는 이미 제공되고 있다. 만약에 오라클을 사용한다면 sonarqube_extensions 폴더에 oracle jdbc드라이버를 설치해야 한다. 이를 위해 다음 단계를 따라하자. 
 
-   * 임베디드 h2 데이터베이스를 사용하는 소나큐브 도커 컨테이너를 시작
+   * 임베디드 h2 데이터베이스를 사용하는 소나큐브 도커 컨테이너를 일단 시작
 
    ```bash
    $ docker run --rm \
@@ -114,7 +120,7 @@ wrapper.java.command=/path/to/my/jdk/bin/java
        <image_name>
    ```
 
-   * 일단 시작뙜으면 그냥 끈다.
+   * 일단 시작됐으면 그냥 끈다.
    * `sonarqube_extensions/jdbc-driver/oracle` 에 오라클 JDBC 드라이버를 복사한다.
 
 3. -e 환경변수를 사용하여 도커 컨테이너를 기동한다. 
@@ -122,7 +128,7 @@ wrapper.java.command=/path/to/my/jdk/bin/java
 ```bash
 $> docker run -d --name sonarqube \
     -p 9000:9000 \
-    -e SONAR_JDBC_URL=... \
+    -e SONAR_DBC_URL=... \
     -e SONAR_JDBC_USERNAME=... \
     -e SONAR_JDBC_PASSWORD=... \
     -v sonarqube_data:/opt/sonarqube/data \
@@ -135,7 +141,7 @@ $> docker run -d --name sonarqube \
 
 #### 도커 컴포즈를 사용하는 경우
 
-다음 yml파일을 사용하자. 
+다음 yml파일을 사용하자.
 
 ```yaml
 version: "3"
@@ -174,7 +180,52 @@ volumes:
   postgresql_data:
 ```
 
+이 yml파일에서는 postgreSQL도 도커 이미지로 설치하는 것으로 진행하고 있다. 만약 필자와 같이 postgreSQL또는 다른 데이터베이스를 설치하였다면 db관련된 부분은 작성해서는 안된다. 또한, `jdbc:postgresql://db:5432/sonar` 값도 실제 설치된 데이터베이스의 정보가 입력되어야 한다.
+
+yml파일이 저장되어 있는 폴더로 가서 다음 명령어를 실행하자. 백그라운드 방식으로 실행하기 위해 -d옵션을 붙였다.
+
+```bash
+docker-compose up -d
+```
+
+#### 메모리 오류가 발생하는 경우
+
+컨테이너가 시작되지 않을 수 있다. 원인을 찾아보니 다음과 같다. 
+
+```
+sonarqube_1  | ERROR: [1] bootstrap checks failed
+sonarqube_1  | [1]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+```
+
+운영체제에 설정된 vm 메모리가 너무 작기 때문이란다. 해결 하기 위해 다음 명령어로 값을 수정한다. 
+
+```
+sysctl -w vm.max_map_count=262144
+```
+
+하지만, 위의 명령어는 일시적이다. 운영체제를 재부팅하면 다시 원래의 설정으로 돌아간다. 영구적으로 적용하기 위해서는  `/etc/sysctl.conf` 을 수정한다. 다음 항목을 추가하자. 
+
+```
+vm.max_map_count = 262144.
+```
+
+파일을 수정 후 `sysctl -p` 명령으로 설정을 적용하고 다시 도커 이미지를 시작하자.
+
+### 접속하기
+
+웹브라우저에서 다음 주소를 입력해보자.
+
+```
+http://{설치된머신의IP}:9000/
+```
+
+다음과 비슷한 화면이 나오면 설치 성공이다. 
+
+![image-20201121233604359](../assets/images/post/sonar-qube/image-20201121233604359.png)
+
 ### 플러그인 설치
+
+
 
 ## 소스코드 분석하기
 
