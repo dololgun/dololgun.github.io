@@ -20,6 +20,19 @@ bind mount 는 운영체제의 디렉터리 시스템의 영향을 많이 반면
 $ docker volume create my-vol
 ```
 
+`-o` or `--opt` 옵션을 사용하면 볼륨을 더욱 자세하게 설정할 수 있다. 
+
+```bash
+$ docker volume create --driver local \
+    --opt type=btrfs \
+    --opt device=/dev/sda2 \
+    foo
+```
+
+
+
+
+
 자신의 도커에 설정된 볼륨 정보를 보려면 다음 명령어를 입력한다. 
 
 ```bash
@@ -50,3 +63,4 @@ $ docker volume inspect my-vol
 $ docker volume rm my-vol
 ```
 
+볼륨을 삭제하면 볼륨과 매핑된 실제 폴더도 삭제 된다. 

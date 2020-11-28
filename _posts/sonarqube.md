@@ -259,7 +259,103 @@ Password: admin
 
 ## 소스코드 분석하기
 
-일단 소나큐브(서버)가 설치가 되면, 우리는 스캐너를 설치할 수 있고 프로젝트를 생성할 수 있다.
+일단 소나큐브(서버)가 설치가 되면, 우리는 스캐너를 설치할 준비가 된 것이며 프로젝트를 생성할 수 있다. 이를 위해, 스캐너를 설치하고 설정해야 한다. 
+
+우리가 사용하는 빌드 툴에 따라 다음과 같이 다양한 스캐너가 지원되고 있다. 
+
+- Gradle - [SonarScanner for Gradle](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/)
+- MSBuild - [SonarScanner for MSBuild](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-msbuild/)
+- Maven - use the [SonarScanner for Maven](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)
+- Jenkins - [SonarScanner for Jenkins](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-jenkins/)
+- Azure DevOps - [SonarQube Extension for Azure DevOps](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-azure-devops/)
+- Ant - [SonarScanner for Ant](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-ant/)
+- anything else (CLI) - [SonarScanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/)
+
+> 소나큐브는 깃헙과 같은 잘 알려진 ALM 사이트에서도 연계를 지원한다.
+
+프로젝트는 처음으로 분석이 이뤄지면 자동으로 생성된다. 만약 첫 분석전에 프로젝트에 대한 설정이 필요하다면, 관리자 권한으로 미리 프로젝트를 생성할 수 있다. 
+
+### 소나 스캐너 (메이븐)
+
+분석하고자하는 소스가 메이븐 프로젝트로 구성되어 있다면, 메이븐 빌드 사이클에서 소나큐브러너를 실행할 수 있다. 메이븐이 자동으로 소나큐브라이브러리를 받기 때문에 별도의 설치나 라이브러리 다운로드가 필요없다. 
+
+#### 필요사항
+
+메이븐 3.x
+
+#### 전역 설정
+
+소나큐브 플러그인과 소나큐브 서버 정보를 입력하기 위해 $MAVEN_HOME/conf/setting.xml파일을 수정한다. 
+
+```xml
+<settings>
+    <pluginGroups>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    </pluginGroups>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                  http://myserver:9000
+                </sonar.host.url>
+            </properties>
+        </profile>
+     </profiles>
+</settings>
+```
+
+#### 분석 하기
+
+분석하고자하는 메이븐 프로젝트에서 다음과 같이 입력한다. 
+
+```bash
+$ mvn clean verify sonar:sonar
+```
+
+#### 분석 설정 하기
+
+분석 대상 프로젝트 pom.xml파일을 수정하여 분석 설정을 할 수 있다. 
+
+```xml
+<properties>
+  <sonar.buildString> [...] </sonar.buildString>
+</properties>
+```
+
+#### 메이븐 플러그인 버전 고정
+
+프로젝트 pom.xml을 수정하여 소나큐브 메이븐 플러그인의 버전을 고정(프로젝트 별로 설정)할 수 있다. 
+
+```xml
+<build>
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.7.0.1746</version>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+</build>
+```
+
+### 젠킨스 에서 분석하기
+
+젠킨스를 위한 소나큐브 플러그인이 있다. ([링크](https://plugins.jenkins.io/sonar/) 에서 다운 가능)
+
+이 플러그인을 이용하여 소나큐브와 관련된 설정을 젠킨스에서 하고 소나큐브 분석을 실행할 수 있다.  
+
+### 소나 스캐너 설정하기
+
+대상 프로젝트의 루트 디렉토리에 `sonar-project.properties` 파일을 생성한다. 
+
+
 
 # 출처
 
