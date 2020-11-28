@@ -223,13 +223,43 @@ http://{설치된머신의IP}:9000/
 
 ![image-20201121233604359](../assets/images/post/sonar-qube/image-20201121233604359.png)
 
+#### 관리자로 접속하기
+
+소나큐브는 다음과 같이 초기 관리자 계정과 비밀번호를 제공한다.
+
+```
+Default Admin Credentials
+When installing SonarQube, a default user with Administer System permission is created automatically:
+
+Login: admin
+Password: admin
+```
+
+
+
 ### 플러그인 설치
 
+2가지 방법있다. 
 
+#### 마켓플레이스에서 설치
+
+소나큐브가 설치되어 있는 머신이 인터넷과 연결되어 있다면 소나튜브UI를 통해서 자동으로 설치할 수 있다.
+
+#### 수동 설치
+
+소나큐브가 인터넷에 연결되지 않은 경우 사용하는 방법이다. 또는 자신이 직접 소나큐브 플러그인을 만들었다면 마켓플레이스에 올리기 전에 미리 설치하는 경우에도 사용한다. 
+
+먼저, 플러그인 문서 페이지를 방문하여 플러그인 메뉴얼 다운로드 링크를 찾는다. 링크를 통하여 플러그인을 받는다. 플러그인은 보통 jar파일이다. 이 파일을 *$SONARQUBE-HOME/extensions/downloads* 에 놓은 후, 소나큐브를 재시작한다.
+
+#### 인터넷에 접속이 안되는 경우
+
+인터넷에 접속이 안되는 상황에서 소나큐브는 기본적으로 마켓플레이스로 접속을 시도한다. 이런 경우 소나큐브에 오류 로그가 계속 남는다. 이런 경우, 마켓플레이스 접속 기능을 비활성화하는 것이 좋다. 
+
+*$SONARQUBE-HOME/conf/sonar.properties* 파일의 `sonar.updatecenter.activate`  항목을 수정하자.
 
 ## 소스코드 분석하기
 
-
+일단 소나큐브(서버)가 설치가 되면, 우리는 스캐너를 설치할 수 있고 프로젝트를 생성할 수 있다.
 
 # 출처
 
