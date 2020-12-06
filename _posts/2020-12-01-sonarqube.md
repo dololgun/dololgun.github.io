@@ -1,7 +1,6 @@
 ---
 title: "소나큐브 설치하기"
 date: 2020-12-01 09:00:00 +0900
-categories: sonarquxbe
 ---
 
 ## 개요
