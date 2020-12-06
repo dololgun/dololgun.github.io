@@ -1,13 +1,14 @@
 ---
 title: "소나큐브 설치하기"
 date: 2020-12-01 09:00:00 +0900
+categories: sonarqube
 ---
 
 ## 개요
 
 소나큐브는 버그를 자동으로 찾기 위한 도구이다. 아래 그림과 같이 우리가 작성한 코드를 commit/merge 하면 형상관리 툴에 저장이되고 젠킨스와 같은 CI/CD도구가 코드를 컴파일/빌드하고 소나큐브에 검사를 의뢰하게 된다. 
 
-![SonarQube Instance Components](../assets/images/post/sonar-qube/dev-cycle.png)
+![SonarQube Instance Components](../../assets/images/post/sonar-qube/dev-cycle.png)
 
 소나큐브는 코드를 검사하고 그 결과를 웹UI를 통하여 리포팅한다. 개발자는 소나큐브가 제공하는 웹UI에 접속하여 자신의 코드에 대한 인스펙션 결과를 확인할 수 있고 프로젝트 관리자는 이것을 통하여 프로그램적인 오류를 사전에 해결할 수 있다.
 
@@ -23,7 +24,7 @@ date: 2020-12-01 09:00:00 +0900
 * 소나큐브 서버
 * 데이터베이스 서버
 
-![SonarQube Instance Components](../assets/images/post/sonar-qube/SQ-instance-components.png)
+![SonarQube Instance Components](../../assets/images/post/sonar-qube/SQ-instance-components.png)
 
 ### 호스트와 위치
 
@@ -232,7 +233,7 @@ http://{설치된머신의IP}:9000/
 
 다음과 비슷한 화면이 나오면 설치 성공이다. 
 
-![image-20201121233604359](../assets/images/post/sonar-qube/image-20201121233604359.png)
+![image-20201121233604359](../../assets/images/post/sonar-qube/image-20201121233604359.png)
 
 #### 관리자로 접속하기
 
@@ -264,7 +265,7 @@ Password: admin
 
 Admistration탭으로 가서 마켓플레이스를 선택하면 다음과 같이 다양한 플러그인을 검색하여 설치할 수 있다.
 
-![image-20201206180112695](../assets/images/post/checkstyle-sonarqube-plugin/image-20201206180112695.png)
+![image-20201206180112695](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201206180112695.png)
 
 #### 수동 설치
 
@@ -386,13 +387,13 @@ $ mvn clean verify sonar:sonar
 
 외부 플러그인을 설치하게 되면 플러그인이 제공하는 룰이 추가되기 때문에 더욱 많은 룰을 사용할 수 있다.
 
-![image-20201206194422973](../assets/images/post/checkstyle-sonarqube-plugin/image-20201206194422973.png)
+![image-20201206194422973](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201206194422973.png)
 
 ### Quality Profiles
 
 소스를 분석할 때 모든 룰을 사용하는 것보다 자신이 필요한 규칙에 대해서만 적용하는 것이 더 효과적이다. 이런 룰들의 모음을 Quality Profiles라고 한다. 각 언어별로 기본으로 제공되는 Quality Profile이 있으며 우리가 지정한 Quality Profile이 있다면 우리가 지정한 것으로 소스가 분석된다.
 
-![image-20201206194530534](../assets/images/post/checkstyle-sonarqube-plugin/image-20201206194530534.png)
+![image-20201206194530534](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201206194530534.png)
 
 # 출처
 
