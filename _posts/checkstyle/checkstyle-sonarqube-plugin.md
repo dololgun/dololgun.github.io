@@ -72,6 +72,46 @@ java와 관련된 모든 룰이 다 보이는데 여기서 Line Length 룰을 �
 
 max는 40으로 하고 tabWidth는 4로 설정하자.
 
+### 체크스타일 설정 파일을 이용한 Quality Profiles 생성
+
+이번엔 체크 스타일 설정 xml을 이용하여 Quality Profile을 생성해보자. 새로운 Quaility Profile을 생성한다. 
+
+Name : checkstyle way2
+
+Language : Java
+
+Parent : None
+
+Checkstyle : checkstyle 포스팅에서 계속 다룬 sun_checkstyle.xml 파일
+
+![image-20201217223323734](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201217223323734.png)
+
+이렇게 하면 아래 오류 메세지가 나타나며 quality profile이 생성 되지 않는다. 
+
+> Rule template can't be activated on a Quality profile: checkstyle:com.puppycrawl.tool...
+
+이유가 뭘까? 
+
+체크스타일 rule을 확인해보자. 아래와 같이 `RULE TEMPLATE` 표시가 있는 Rule과 그렇지 않은 Rule이 있다. 
+
+![image-20201217223744915](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201217223744915.png)
+
+RULE TEMPLATE 표시가 없는 rule은 즉시 active 할 수 있지만 표시가 있는 rule은 activate를 바로 할 수 없다. 대신 Custome Rules을 생성해야 한다.
+
+예를 들어, Final Parameters는 sun_checks.xml에 아래와 같이 설정되어 있다. 
+
+```xml
+<module name="FinalParameters" />
+```
+
+그런데 Final Parameters가 RULE TEMPLATE이기 때문에 오류가 발생한다. 이를 해결하기 위해, Final Parameters에 대한 커스텀 rule을 생성하자. 아래 화면에서 create를 클릭한다. 
+
+![image-20201217231535431](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201217231535431.png)
+
+커스텀 룰을 만들 때 Key를 지정하는 것이 중요하다. 키는 체크스타일 설정파일의 module name과 같도록 한다. 아래 그림이 그 예이다. 
+
+![image-20201217231627107](../../assets/images/post/checkstyle-sonarqube-plugin/image-20201217231627107.png)
+
 ### 프로젝트 추가
 
 checkstyle way에 적용할 프로젝트를 추가하자. 위의 룰추가를 위해 들어간 화면에서 Change Projects를 이용하여 프로젝트를 추가하자. 
