@@ -1,0 +1,1 @@
+![image-20210110214314558](../../assets/images/post/eclipse-plugin-development/image-20210110214314558.png)
