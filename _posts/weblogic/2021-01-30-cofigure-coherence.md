@@ -14,7 +14,11 @@ categories: weblogic
 
 ### Operation Configuration File 
 
-`coherence.jar` 파일안에 `tangosol-coherence.xml` 에 관련된 설정이 있다. 코히어런스는 이 설정 파일을 기본으로 변경해야 할 설정에 대해 오버라이드 파일을 생성하여 적용하는 것을 추천한다. 즉, 변경할 설정이 있다면 오버라이드 파일을 만들고 코히어런스에게 이런 오버라이드 파일이 있으니 그 파일을 보고 기본 설정을 오버라이드하라고 지시할 수 있는 것이다. 그런데, 코히어런스는 `tangosol-coherence-override.xml` 명칭의 파일이 클래스 패스에 있다면 알아서 오버라이드 파일로 인식하고 로드한다. 
+`coherence.jar` 파일안에 `tangosol-coherence.xml` 에 관련된 설정이 있다. 설정 파일의 이름에서 알 수 있듯이 코히어런스가 동작하는 모든 행위에 대한 설정을 한다. 
+
+가이드에서는 이 설정 파일은 그냥 두고 변경해야 할 설정이 있다면 오버라이드 파일을 생성하여 적용하는 것을 추천한다. 즉, 변경할 설정이 있다면 오버라이드 파일을 만들고 코히어런스에게 이런 오버라이드 파일이 있으니 그 파일을 보라고 하는 것이다. 
+
+코히어런스는 `tangosol-coherence-override.xml` 명칭의 파일이 클래스 패스에 있다면 알아서 오버라이드 파일로 인식하고 로드한다. 
 
 그럼 오버라이드 파일을 한번 만들어보자.
 
@@ -36,8 +40,7 @@ a development mode.
         </member-identity>
     </cluster-config>
 
-    <configurable-cache-factory-config xml-override="cache-factory-config.xml">
-        <class-name system-property="coherence.cachefactory">com.tangosol.net.ExtensibleConfigurableCacheFactory</class-name>
+    <configurable-cache-factory-config>
         <init-params>
             <init-param>
                 <param-type>java.lang.String</param-type>
@@ -45,11 +48,10 @@ a development mode.
             </init-param>
         </init-params>
     </configurable-cache-factory-config>
-
 </coherence>
 ```
 
-* `$COHERENCE_HOME/bin/cache-server.sh` 파일의 가장 아래부분을 수정하여 클래스 패스옵션에 $COHERENCE_HOME/config 을 추가한다.
+* `$COHERENCE_HOME/bin/cache-server.sh` 파일의 가장 아래부분을 수정하여 클래스 패스 옵션(-cp 옵션)에 $COHERENCE_HOME/config 을 추가한다.
 
 ```sh
 ... 중략 ...
@@ -66,3 +68,28 @@ $JAVAEXEC -server -showversion $JAVA_OPTS $COHERENCE_OPTS -cp "$COHERENCE_HOME/l
 2021-01-30 22:00:55.907/1.389 Oracle Coherence 14.1.1.0.0 <Info> (thread=main, member=n/a): Loaded operational overrides from "file:/Users/geonho/Oracle/Middleware/Oracle_Home/coherence/config/tangosol-coherence-override.xml"
 ```
 
+tangosol-coherence-override.xml 설정파일에 정의된 내용을 간략히 설명하도록 하겠다.
+
+#### cluster-name
+
+`cluster-name` 은 말그래도 클러스터 이름을 지정하는 것이다. 코히어런스는 무조건 클러스터를 구성하여 실행된다. 이 말은 우리가 클러스터를 지정하지 않는다면 코히어런스가 알아서 클러스터 이름을 지정한다. 위의 설정에서 클러스터 이름을 leegeonho로 지었으므로 코히어런스 실행 시 아래와 같은 로그를 확인할 수 있다. 
+
+```bash
+2021-01-30 22:01:00.777/6.259 Oracle Coherence GE 14.1.1.0.0 <Info> (thread=Cluster, member=n/a): Created a new cluster "leegeonho" with Member(Id=1, Timestamp=2021-01-30 22:00:57.442, Address=192.168.1.67:9900, MachineId=10845, Location=process:49361, Role=CoherenceServer, Edition=Grid Edition, Mode=Development, CpuCount=4, SocketCount=4)
+```
+
+#### configurable-cache-factory-config
+
+기본 설정된 coherence-cache-config.xml 파일을 오버라이드 하기 위해 사용한다. 자세한 내용은 cache configuration file에서 설명한다. 
+
+### Cache Configuration File
+
+이 파일에서 코히어런스 캐시에 대한 설정을 할 수 있다. 기본 설정은 `coherence.jar` 파일안에 `coherence-cache-config.xml` 에 있다. 물론 이 파일이 아닌 다른 설정 파일도 사용할 수 있다. 이를 위해 `tangosol-coherence-override.xml` 파일에 `configurable-cache-factory-config` 항목에 파일의 경로를 입력한다.
+
+ 
+
+
+
+## 참조
+
+https://docs.oracle.com/en/middleware/fusion-middleware/coherence/12.2.1.4/develop-applications/understanding-configuration.html#GUID-C5335E66-6D7F-4C15-B7EC-F6D7D1494066
