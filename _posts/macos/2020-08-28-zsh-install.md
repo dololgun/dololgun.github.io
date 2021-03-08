@@ -53,6 +53,8 @@ cat /etc/shells
 ZSH_THEME="agnoster"
 ```
 
+변경을 하면 프롬프트의 폰트가 깨진다. 내가 참고한 포스트에서는 powerline 폰트보다 D2 코딩 폰트를 사용하라고 한다. [여기서 다운로드](https://github.com/naver/d2codingfont)
+
 ### 프롬프트 변경하기
 
 여기서 프롬프트란 터미널 창에서 커서를 기준으로 왼쪽에 표시되는 정보를 의미한다. 
@@ -81,7 +83,7 @@ prompt_context() {
 open -a TextEdit ~/.oh-my-zsh/themes/agnoster.zsh-theme
 ```
 
-테마파일의 다음 항모을 수정한다. 
+테마파일의 다음 항목을 수정한다. 
 ```
 build_prompt() {
   RETVAL=$?
@@ -97,3 +99,26 @@ build_prompt() {
 }
 ```
 
+그리고 `prompt_newline` 함수를 추가한다. 
+
+{% raw %}
+
+```shell
+prompt_newline() {
+  if [[ -n $CURRENT_BG ]]; then
+    echo -n "%{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR
+%{%k%F{blue}%}$SEGMENT_SEPARATOR"
+  else
+    echo -n "%{%k%}"
+  fi
+
+  echo -n "%{%f%}"
+  CURRENT_BG=''
+}
+```
+
+{% endraw %}
+
+## 참조
+
+https://medium.com/harrythegreat/oh-my-zsh-iterm2%EB%A1%9C-%ED%84%B0%EB%AF%B8%EB%84%90%EC%9D%84-%EB%8D%94-%EA%B0%95%EB%A0%A5%ED%95%98%EA%B2%8C-a105f2c01bec

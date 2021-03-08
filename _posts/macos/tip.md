@@ -74,3 +74,11 @@ vi /etc/shells
 /bin/zsh
 /usr/local/bin/zsh
 ```
+
+### 재부팅 하기
+
+```
+% ssh -l <admin> <computer ip>
+% sudo shutdown -r hhmm
+```
+
