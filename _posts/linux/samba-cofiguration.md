@@ -35,7 +35,7 @@ samba를 사용하는 모든 유저에 samba 그룹을 할당한다.
 
 유저는 리눅스의 유저를 사용하지만 인증은 리눅스와 별개로 samba의 인증방식을 따른다. 
 
-즉, 유저 생성은 리눅스의 유저를 생성하는 절차대로 하면 된다. 단, samba만을 사용하는 shell 에 접근할 필요가 없다.  
+즉, 유저 생성은 리눅스의 유저를 생성하는 절차대로 하면 된다. 단, samba만을 사용하는 유저에 필요없이 홈디렉터리와 쉘 사용권한을 줄 필요는 없다.  
 
 ```bash
 $ sudo useradd -M -d /samba/josh -s /usr/sbin/nologin -G sambashare josh
