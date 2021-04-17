@@ -75,11 +75,11 @@ su - postgres
 
 postgres 계정으로 로그인을 하면 psql, createdb와 같은 postgresql 명령어를 사용할 수 있다.
 
-### role
+### Role
 
-자동으로 설정되는 것이 또 하나 있는데 postgresql 서버에 postgres role이 기본으로 등록된다. 운영체제 계정으로 도 postgres가 있고 postgresql 서버 안에도 postgres role이 설치되어 있는데 이 둘은 다른 것이니 혼동하지 말자. 그런데 더욱 혼란스러운 것은 운영체제의 postgres 계정으로 postgre 명령어 (psql, createdb 등)을 사용하면 postgres role이 있기 때문에 실행이 가능한 것 같다. 만약 다른 유저로 postgresql 명령어를 사용한다면 해당 유저와 관련한 role이 없다며 명령어가 실행되지 않는다. 서버의 role과 운영체제의 계정은 어떤 관계일까? 이 부분은 좀 더 연구가 필요한 것 같다. 
+Role은 [여기](role.md)에서 자세히 다룬다. 
 
-어쨋건, postgres 계정으로 로그인 한 후 psql 명령어를 사용하면 postgres role로 데이터베이스에 접속할 수 있다. 
+운영체제의 postgres 유저로 로그인 한 후 psql 명령어를 사용하면 별도로 role을 명시하지 않았기 때문에 유저명과 동일한 postgres role로 데이터베이스에 접속한다. 별도의 role을 주고 싶다면 `-U` 옵션을 사용한다. 
 
 ```sqlite
 psql
@@ -88,15 +88,19 @@ psql
 
 postgres role의 비밀번호를 변경하려면 다음 명령어를 사용하자. (운영체제의 postgres와 혼동하지 말자)
 
-```
+```bash
 psql -d template1 -c "ALTER USER postgres WITH PASSWORD 'NewPassword';"
 ```
 
 ### 계정 및 데이터베이스 생성
 
-새로운 데이터베이스와 롤(유저)을 생성하자.
+sql 방식과 커맨드라인 방식이 있다. 커맨드 방식은 `/usr/pgsql-${version}/bin` 에 있는 바이너리를 활용한다. 
 
-```
+새로운 데이터베이스와 role을 생성한다.
+
+커맨드라인 방식:
+
+```bash
 // role을 생성한다
 $ createuser testrole -P 
 
@@ -107,12 +111,30 @@ $ createdb testdb
 $ createdb testdb -O testrole
 ```
 
+sql방식:
+
+```sql
+create role testrole
+```
+
+
+
 롤과 데이터베이스 삭제는 다음과 같이 한다. 
 
-```
+커맨드라인방식:
+
+```bash
 $ dropdb testdb
 $ dropuser testrole
 ```
+
+sql방식;
+
+```sql
+DROP ROLE name;
+```
+
+
 
 ### 컨넥션 및 보안 설정
 
