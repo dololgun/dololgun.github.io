@@ -1,6 +1,6 @@
 ## 설치
 
-### 이미저로 설치하기
+### 이미지로 설치하기
 
 https://www.raspberrypi.org/software/ 사이트에서 라즈베리파이 이미저를 받는다. 
 
