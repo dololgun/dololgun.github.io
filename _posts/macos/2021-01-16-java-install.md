@@ -4,7 +4,7 @@ date: 2021-01-16 09:00:00 +0900
 categories: macos
 ---
 
-이미 JDK가 설치되어 있는 환경에서 또 다른 JDK의 설치가 필요한 경우 고려해야 할 사항을 정리해보았다. MacOS에 기반하고 있으며 리눅스나 윈도우는 비슷하지만 다른 방법으로 관리한다.
+이미 JDK가 설치되어 있는 환경에서 또 다른 JDK의 설치가 필요한 경우 고려해야 할 사항을 정리해보았다. 이 글은 MacOS(High Sierra)에 기반하고 있으며 다른 운영체제도(리눅스, 윈도우) 비슷하면서 조금씩 다른 방법으로 관리한다.
 
 ### 자바 버전 및 위치 확인하기
 
@@ -40,6 +40,16 @@ javap -> /System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/j
 javapackager -> /System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/javapackager
 javaws -> /System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/javaws
 ```
+
+> 주의: M1 mac의 경우는 이 글과 다를 수 있다. 필자가 M1맥의 빅서 운영체제에서 확인한 결과 /usr/bin에 있는 java파일은 실제 바이너리 파일이었다. 
+>
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 java
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javac
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javadoc
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javah
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javap
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javapackager
+> -rwxr-xr-x  1 root   wheel   136K  1  1  2020 javaws
 
 좀 더 정확히 알아보기 위해 `/System/Library/Frameworks/JavaVM.framework/Versions/A` 폴더를 가면 자바와 관련된 라이브러리가 보인다. 그런데, 실제 자바라이브러리가 설치된 경로는 여기가 아니다. 진짜 경로는 다른 방법으로 구해야 한다. 다음 경로의 있는 명령어를 사용하자. 실제 자바가 설치되어 있는 경로는 바로 다음과 같다. 
 
