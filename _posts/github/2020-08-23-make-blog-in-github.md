@@ -157,7 +157,7 @@ Configuration file: /Users/geonho/Documents/minimal-mistake-local/_config.yml
 
 아무런 설정이 되어 있지 않지만 웹페이지가 보인다면 성공이다. 
 
-![스크린샷 2020-08-30 오후 4.48.02](스크린샷 2020-08-30 오후 4.48.02.png)
+![make-blog-in-github-01.png](../../assets/images/post/github/make-blog-in-github-01.png)
 
 ### 샘플 컨텐츠 작성해보기
 
