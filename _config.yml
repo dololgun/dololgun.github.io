@@ -20,7 +20,7 @@ title                    : "돌로구니의 기술 블로그"
 title_separator          : "-"
 subtitle                 : "무작정 따라하기" # site tagline that appears below site title in masthead
 name                     : "이건호"
-description              : "개발자로 살아가면서 기억하고 싶은 것을 남겨두는 저의 작은 공간입니다."
+description              : "개발자로서 기억하고 싶은 것을 남겨두는 공간입니다."
 url                      : "https://dololgun.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "dololgun/dololgun.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
@@ -294,6 +294,7 @@ defaults:
       comments: true
       share: true
       related: true
+      toc: true
   # _pages
   - scope:
       path: "_pages"
