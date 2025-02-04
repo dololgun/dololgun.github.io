@@ -6,7 +6,7 @@ categories: checkstyle
 
 ## 소나큐브란 ? 
 
-체크스타일을 시리즈로 포스팅하다가 갑자기 왠 소나큐브를 이야기 하냐고? 아는 사람은 알겠지만 소나큐브는 코드인스펙션 영역에서 아주 유명한 도구이다. 궁금한 사람은 필자의 포스팅 [소나큐브 설치 플러그인 포스팅](https://dololgun.github.io/sonarqube/sonarqube/) 을 참고하자. 
+체크스타일을 시리즈로 포스팅하다가 갑자기 왠 소나큐브를 이야기 하냐고? 아는 사람은 알겠지만 소나큐브는 코드인스펙션 영역에서 아주 유명한 도구이다. 궁금한 사람은 필자의 포스팅 [소나큐브 설치 플러그인 포스팅]({% post_url /sonarqube/2020-12-01-sonarqube %}) 을 참고하자. 
 
 ## 소나큐브 체크스타일 플러그인
 
@@ -151,7 +151,7 @@ checkstyle way에 적용할 프로젝트를 추가하자. Quality Profile 메뉴
 mvn clean verify sonar:sonar
 ```
 
-메이븐 프로젝트에 소나큐브를 연동하난 방법은 [소나큐브 설치 플러그인 포스팅](https://dololgun.github.io/sonarqube/sonarqube/)을 다시 한번 확인하자.
+메이븐 프로젝트에 소나큐브를 연동하는 방법은 [소나큐브 설치 플러그인 포스팅]({% post_url /sonarqube/2020-12-01-sonarqube %}#소나-스캐너-메이븐)을 다시 한번 확인하자.
 
 ## 마무리
 
