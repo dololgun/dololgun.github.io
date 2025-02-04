@@ -22,10 +22,14 @@ foo:
 main:
   # - title: "Quick-Start Guide"
   #   url: /docs/quick-start-guide/
-  - title: "나와 이 블로그에 대해서"
-    url: /about/
   - title: "포스트"
     url: /year-archive/
+  - title: "카테고리"
+    url: /categories/
+  - title: "JPA"
+    url: /jpa/    
+  - title: "About"
+    url: /about/
   - title: "컬렉션"
     url: /collection-archive/
   # - title: "Terms &amp; Privacy Policy"

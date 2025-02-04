@@ -266,7 +266,9 @@ compress_html:
     envs: development
 
 # Collections
-#collections:
+collections:
+  jpa: 
+    output: true
 #  docs:
 #    output: true
 #    permalink: /:collection/:path/
@@ -302,3 +304,12 @@ defaults:
     values:
       layout: single
       author_profile: true
+  # _jpa
+  - scope:
+      path: ""
+      type: jpa
+    values: 
+      layout: single
+      author_profile: false
+      share: true
+          
