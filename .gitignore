@@ -2,3 +2,7 @@
 Gemfile.lock
 _site/
 .jekyll-cache/
+
+# DrawIO temporary files
+*.dtmp
+*.bkp

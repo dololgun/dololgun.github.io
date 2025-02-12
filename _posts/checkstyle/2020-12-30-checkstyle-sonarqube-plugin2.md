@@ -32,7 +32,7 @@ categories: checkstyle
 
 ### 커스텀 체크 모듈 추가
 
-pom.xml 파일을 열어 이전 포스팅 [체크스타일[checkstyle] - 5 : 나만의 체크 만들기]({% link _posts/checkstyle/2020-10-03-custom-check.md %}) 에서 작성한 커스텀 체크를 디펜던시에 추가한다.
+pom.xml 파일을 열어 이전 포스팅 [체크스타일[checkstyle] - 5 : 나만의 체크 만들기]({% link _posts/checkstyle/2020-10-03-custom-check.md %}) {% comment %} [2020-10-03-custom-check.md](2020-10-03-custom-check.md) {% endcomment %} 에서 작성한 커스텀 체크를 디펜던시에 추가한다.
 
 ```xml
 ...
